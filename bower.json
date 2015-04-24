@@ -1,0 +1,26 @@
+{
+  "name": "jquery.choiceflow",
+  "version": "0.0.0",
+  "homepage": "https://github.com/westwerk-ac/jquery.choiceflow",
+  "authors": [
+    "Marius Neugebauer <mn@westwerk.ac>"
+  ],
+  "description": "jQuery plugin to implement html argument based decision flows",
+  "main": "jquery.choiceflow.js",
+  "keywords": [
+    "jQuery",
+    "choice",
+    "flow"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">=1.3"
+  }
+}
