@@ -10,59 +10,65 @@
 		// groups and values
 		'groups': {},
 
-		// function to display each block of a value
-		'show': function(value) {
-			value.blocks.trigger('choiceflow:beforeShow');
-			value.blocks.each(function() {
-				var returnValues = { 'doDefault': true };
-				$(this).trigger('choiceflow:show', returnValues);
-				if (returnValues.doDefault) {
-					$(this).show();
-				}
-			});
-			value.blocks.addClass('choiceflow-block-active');
-			$(value.elements).addClass('choiceflow-active');
-			value.blocks.trigger('choiceflow:afterShow');
+		// function to display the block of a value
+		'show': function(valueObject) {
+
+            // trigger event on the block and let the event disable the default functionality
+            if (valueObject.block.triggerHandler('choiceflow:show', [valueObject.name, valueObject.group]) !== false) {
+                valueObject.block.show();
+            }
+
+            // add class to block
+            valueObject.block.addClass('choiceflow-block-active');
+
+            // add class to links
+			$(valueObject.links).addClass('choiceflow-active');
+
 		},
 
-		// function to hide each block of a value
-		'hide': function(value) {
-			value.blocks.trigger('choiceflow:beforeHide');
-			value.blocks.each(function() {
-				var returnValues = { 'doDefault': true };
-				$(this).trigger('choiceflow:hide', returnValues);
-				if (returnValues.doDefault) {
-					$(this).hide();
-				}
-			});
-			value.blocks.removeClass('choiceflow-block-active');
-			$(value.elements).removeClass('choiceflow-active');
-			value.blocks.trigger('choiceflow:afterHide');
+		// function to hide the block of a value
+		'hide': function(valueObject) {
+
+            // trigger event on the block and let the event disable the default functionality
+            if (valueObject.block.triggerHandler('choiceflow:hide', [valueObject.name, valueObject.group]) !== false) {
+                valueObject.block.hide();
+            }
+
+            // remove class from block
+            valueObject.block.removeClass('choiceflow-block-active');
+
+            // remove class from link
+			$(valueObject.links).removeClass('choiceflow-active');
+
 		},
 
-		// displays the group's blocks of the given value and hides other blocks
+		// displays the blocks for the given group and values and hide all other blocks
 		'display': function(group, values) {
-			values = $.makeArray(values);
-			group = this.groups[group];
+			groupObject = this.groups[group];
 
-			// is currently not active
-			//console.log(group.active, values);
-			if (group.active != values) {
+            // check if can display the values
+            for (var v = 0; v < values.length; ++v) {
+                var value = values[v];
+                if (groupObject.values[value].block.triggerHandler('choiceflow:display', [value, group]) === false) {
+                    return;
+                }
+            }
 
-				// hide previously active
-				if (group.active != null) {
-					for (var a in group.active) {
-						this.hide(group.values[group.active[a]]);
-					}
-				}
+            // hide previously active
+            var hide = $(groupObject.active).not(values).toArray();
+            for (var h = 0; h < hide.length; ++h) {
+                this.hide(groupObject.values[hide[h]]);
+            }
 
-				// display now active
-				for (var v in values) {
-					this.show(group.values[values[v]]);
-				}
-				group.active = values;
+            // display now active
+            var show = $(values).not(groupObject.active).toArray();
+            for (var s = 0; s < show.length; ++s) {
+                this.show(groupObject.values[show[s]]);
+            }
 
-			}
+            // set active values
+            groupObject.active = values;
+
 		},
 
 		// initializes a link
@@ -72,66 +78,94 @@
 			var choiceflow = this;
 			link = $(link); // the choiceflow link
 			var group = link.data('choiceflowGroup');
-			var value = link.data('choiceflowValue');
+            if (group == undefined) group = 'default';
+			var values = link.data('choiceflowValue').toString().split(',');
 			var active = link.data('choiceflowActive');
-			var blocks = $('.choiceflow-block-' + group + '-' + value);
 
 			// create group entry
 			if (!(group in choiceflow.groups)) {
 				this.groups[group] = {
+                    'name': group,
 					'values': {},
 					'active': []
 				}
 			}
 			var groupObject = choiceflow.groups[group];
 
-			// create value entry
-			if (!(value in groupObject.values)) {
-				groupObject.values[value] = {
-					'elements': [],
-					'blocks': blocks
-				};
-			}
-			var valueObject = groupObject.values[value];
+            for (var v = 0; v < values.length; ++v) {
+                var value = values[v];
 
-			// add choiceflow link to value entry
-			valueObject.elements.push(link);
+                // create value entry
+                if (!(value in groupObject.values)) {
+                    groupObject.values[value] = {
+                        'name': value,
+                        'group': group,
+                        'links': [],
+                        'block': $('#choiceflow-block-' + group + '-' + value)
+                    };
+                }
+                var valueObject = groupObject.values[value];
 
-			// visibility
-			if (active == "1") {
-				choiceflow.show(valueObject);
-				groupObject.active.push(value);
-			} else if ($.inArray(value, groupObject.active.inArray) < 0) {
-				choiceflow.hide(valueObject);
-			}
+                // add choiceflow link to value entry
+                valueObject.links.push(link);
 
-			// when clicking a choiceflow link
-			link.click(function(group, value) {
-				return function() {
-					choiceflow.display(group, value);
-				}
-			}(group, value));
-		}
-	};
+                // visibility
+                if (active == "1") {
+                    choiceflow.show(valueObject);
+                    groupObject.active.push(value);
+                } else if ($.inArray(value, groupObject.active) < 0) {
+                    choiceflow.hide(valueObject);
+                }
 
-	// global jQuery choiceflow() function
-	$.choiceflow = function(action) {
-		if (action === "init") {
-			$('[data-choiceflow-group]').choiceflow('init-link');
-		}
-		return this;
+            }
+
+            // cursor = pointer
+            link.css({'cursor': 'pointer'});
+
+            // when clicking a choiceflow link
+            link.click(function(group, values) {
+                return function() {
+                    choiceflow.display(group, values);
+                }
+            }(group, values));
+        }
 	};
 
 	// jQuery object choiceflow() function
 	$.fn.choiceflow = function(action) {
-		if (action === "init-link") {
-			this.each(function() {
-				choiceflow.initLink(this);
-			});
-		}
+        switch (action) {
+
+            // whether the choiceflow block is active
+            case 'is-active':
+                return this.is('.choiceflow-block-active');
+
+            // display a choiceflow block
+            case 'display':
+                var id = this.attr('id').split('-');
+                choiceflow.display(id[2], [id[3]]);
+                break;
+
+            // initialize a choiceflow link
+            case 'init-link':
+                this.each(function() {
+                    choiceflow.initLink(this);
+                });
+                break;
+
+        }
 		return this;
 	};
 
+    // global jQuery choiceflow() function
+    $.choiceflow = function(action) {
+        // init all choiceflow links
+        if (action === "init") {
+            $('[data-choiceflow-value]').choiceflow('init-link');
+        }
+        return this;
+    };
+
+    // init all choiceflow links when the page is ready
 	$(function() {
 		$.choiceflow("init");
 	});
