@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<title>jQuery.choiceflow demo</title>
+
+	<style type="text/css">
+		@import url('../bower_components/bootstrap/dist/css/bootstrap.min.css');
+	</style>
+
+	<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="../jquery.choiceflow.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            // place cursor in the username input field
+            $('#inputUsername').focus();
+
+            // check input with the given id
+            // render has-error/success classes
+            function checkInput(id) {
+                var input = $('#' + id);
+                var formGroup = input.parent().parent();
+                if (input.val() == "" || (input.is('[type="checkbox"]') && !input.is(':checked'))) {
+                    formGroup.addClass('has-error').removeClass('has-success');
+                    return false;
+                }
+                formGroup.addClass('has-success').removeClass('has-error');
+                return true;
+            }
+
+            // check all inputs with the given ids
+            // sets focus on first input that has an error
+            // return false if one has an error
+            function checkInputs(ids) {
+                var errorId = '';
+                for (var i = 0; i < ids.length; ++i) {
+                    if (!checkInput(ids[i]) && errorId == '')
+                        errorId = ids[i];
+                }
+                if (errorId != '') {
+                    $('#' + errorId).focus();
+                }
+                return errorId == '';
+            }
+
+            // choiceflow block events
+            $('[id^="choiceflow-block-"]')
+
+                    // overwrite show event
+                    .on('choiceflow:show', function(event, value, group) {
+
+                        // show it smooth
+                        $(this).slideDown();
+
+                        // set focus
+                        switch (group + '-' + value) {
+                            case 'default-info':
+                                $('#inputName').focus();
+                                break;
+                            case 'default-finish':
+                                $('#inputTerms').focus();
+                                break;
+                        }
+
+                        // don't do the normal show stuff
+                        return false;
+
+                    })
+
+                    // overwrite hide event
+                    .on('choiceflow:hide', function() {
+                        // hide it smooth
+                        $(this).slideUp();
+                        // don't do the normal hide stuff
+                        return false;
+                    })
+
+                    // event to determine whether to display a choiceflow block or not
+                    // check if inputs are given before displaying the next block
+                    .on('choiceflow:display', function(event, value, group) {
+                        //noinspection FallThroughInSwitchStatementJS
+                        switch (group + '-' + value) {
+                            case 'form-submit':
+                                if (!checkInputs(['inputTerms']))
+                                    return false;
+                            case 'default-finish':
+                                if (!checkInputs(['inputName', 'inputAddress', 'inputPhone']))
+                                    return false;
+                            case 'default-info':
+                                if (!checkInputs(['inputUsername', 'inputPassword']))
+                                    return false;
+                        }
+                        return true;
+                    });
+
+            // overwrite submitting the form
+            // instead jump to the next choiceflow block
+            $('#myform').submit(function(event) {
+
+                // in this demo we don't actually submit the form
+                event.preventDefault();
+
+                // from default-login to default-info
+                if ($('#choiceflow-block-default-login').choiceflow('is-active')) {
+                    $('#choiceflow-block-default-info').choiceflow('display');
+                }
+
+                // from default-info to default-finish
+                else if ($('#choiceflow-block-default-info').choiceflow('is-active')) {
+                    $('#choiceflow-block-default-finish').choiceflow('display');
+                }
+
+                // from default-finish to form-submit
+                else if ($('#choiceflow-block-default-finish').choiceflow('is-active')) {
+                    $('#choiceflow-block-form-submit').choiceflow('display')
+                }
+
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>jQuery.choiceflow demo</h1>
+
+    <div id="choiceflow-block-form-form">
+
+        <!-- each choiceflow block needs to be referenced via a choiceflow link in order to be recognized -->
+        <!-- a choiceflow link can be any tag with data-choiceflow-value, it does not have to be visible -->
+        <div class="hidden" data-choiceflow-group="form" data-choiceflow-value="form" data-choiceflow-active="1"></div>
+
+        <form class="form-horizontal well" id="myform">
+
+            <h2>Registration</h2>
+
+            <div>
+
+                <h3 data-choiceflow-value="login" data-choiceflow-active="1">
+                    1. Choose username and password
+                </h3>
+
+                <div id="choiceflow-block-default-login">
+
+                    <div class="form-group">
+                        <label for="inputUsername" class="col-sm-2 control-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPassword" class="col-sm-2 control-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary" data-choiceflow-value="info">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <h3 data-choiceflow-value="info">
+                    2. Tell us more about yourself
+                </h3>
+
+                <div id="choiceflow-block-default-info">
+
+                    <div class="form-group">
+                        <label for="inputName" class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputName" placeholder="John Doe">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputAddress" class="col-sm-2 control-label">Address</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="inputAddress"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPhone" class="col-sm-2 control-label">Phone</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputPhone">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+
+                            <button type="button" class="btn btn-default" data-choiceflow-value="newsletter">
+                                Subscribe the newsletter
+                            </button>
+
+                            <button type="button" class="btn btn-primary" data-choiceflow-value="finish">
+                                Continue
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <h3 data-choiceflow-value="finish">
+                    3. Subscribe the newsletter
+                </h3>
+
+                <div id="choiceflow-block-default-newsletter">
+
+                    <div class="form-group">
+                        <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputEmail">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary" data-choiceflow-value="finish">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <h3 data-choiceflow-value="finish">
+                    4. Finish registration
+                </h3>
+
+                <div id="choiceflow-block-default-finish">
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="inputTerms"> I have read the terms and conditions.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary" data-choiceflow-group="form" data-choiceflow-value="submit">
+                                Register
+                            </button>
+                            <button type="submit" class="hidden">Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+    <div id="choiceflow-block-form-submit" class="well">
+
+        <p>With choiceflow you can build simple linear step-by-step flows and choice based flows with more than one path.</p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
