@@ -1,0 +1,6 @@
+{
+    "name": "westwerk-ac/jquery.choiceflow",
+    "require": {
+      "jquery": ">=1.3"
+    }
+}
