@@ -1,4 +1,4 @@
-# jquery.choiseflow
+# jquery.choiceflow
 
 Choiceflow is a jQuery plugin that provides you with an easy way to display and hide parts of your website.
 It can be used for step-by-step forms with a linear or decision based path.
