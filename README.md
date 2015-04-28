@@ -151,7 +151,7 @@ If a link would display multiple blocks and any of those blocks' `choiceflow:dis
 
 But be careful with overlapping events. The return value of the last event counts.
 
-#### The `choiceflow:show` and `choiceflow:hide` events
+### The `choiceflow:show` and `choiceflow:hide` events
 
 The events `choiceflow:show|hide` take three arguments: `(event, block, group)`.
 The events are fired on the block element.
@@ -165,7 +165,7 @@ You can use these events to overwrite the default action like above.
 
 You should not try to prevent displaying here. Use the `choiceflow:display` event for that.
 
-#### The `choiceflow:afterShow` and `choiceflow:afterHide` events
+### The `choiceflow:afterShow` and `choiceflow:afterHide` events
 
 The events `choiceflow:afterShow|afterHide` take three arguments: `(event, block, group)`.
 The events are fired on the block element.
@@ -177,7 +177,7 @@ These events are fired right after a block was shown or hidden.
 
 You can use these events for example to set the focus to a field in the shown block.
 
-#### The `choiceflow:afterDisplay` event
+### The `choiceflow:afterDisplay` event
 
 The event `choiceflow:afterDisplay` takes four arguments: `(event, blocks, hiddenBlocks, group)`.
 The event is fired on the block element.
