@@ -75,6 +75,11 @@
             // set active values
             groupObject.active = values;
 
+            // after display event
+            for (v = 0; v < values.length; ++v) {
+                groupObject.values[values[v]].block.triggerHandler('choiceflow:afterDisplay', [values, group]);
+            }
+
 		},
 
 		// initializes a link
