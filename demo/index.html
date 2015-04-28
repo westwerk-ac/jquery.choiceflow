@@ -67,9 +67,9 @@
 
                     // event to determine whether to display a choiceflow block or not
                     // check if inputs are given before displaying the next block
-                    .on('choiceflow:display', function(event, value, group) {
+                    .on('choiceflow:display', function(event, block, group) {
                         //noinspection FallThroughInSwitchStatementJS
-                        switch (group + '-' + value) {
+                        switch (group + '-' + block) {
                             case 'form-submit':
                                 if (!checkInputs(['inputTerms']))
                                     return false;
@@ -84,9 +84,9 @@
                     })
 
                     // after a block is shown
-                    .on('choiceflow:afterShow', function(event, value, group) {
+                    .on('choiceflow:afterShow', function(event, block, group) {
                         // set focus
-                        switch (group + '-' + value) {
+                        switch (group + '-' + block) {
                             case 'default-newsletter':
                                 $('#inputEmail').focus();
                                 break;
