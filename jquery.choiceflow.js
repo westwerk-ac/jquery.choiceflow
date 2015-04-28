@@ -77,7 +77,7 @@
 
             // after display event
             for (v = 0; v < values.length; ++v) {
-                groupObject.values[values[v]].block.triggerHandler('choiceflow:afterDisplay', [values, group]);
+                groupObject.values[values[v]].block.triggerHandler('choiceflow:afterDisplay', [values, hide, group]);
             }
 
 		},
