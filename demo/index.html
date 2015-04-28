@@ -57,6 +57,9 @@
 
                         // set focus
                         switch (group + '-' + value) {
+                            case 'default-newsletter':
+                                $('#inputEmail').focus();
+                                break;
                             case 'default-info':
                                 $('#inputName').focus();
                                 break;
@@ -110,6 +113,11 @@
 
                 // from default-info to default-finish
                 else if ($('#choiceflow-block-default-info').choiceflow('is-active')) {
+                    $('#choiceflow-block-default-finish').choiceflow('display');
+                }
+
+                // from default-newsletter to default-finish
+                else if ($('#choiceflow-block-default-newsletter').choiceflow('is-active')) {
                     $('#choiceflow-block-default-finish').choiceflow('display');
                 }
 
@@ -271,6 +279,8 @@
                             <button type="button" class="btn btn-primary" data-choiceflow-group="form" data-choiceflow-value="submit">
                                 Register
                             </button>
+                            <!-- this hidden submit button would be at the end of a form normally -->
+                            <!-- we need it in this demo to have a submit event when pressing enter -->
                             <button type="submit" class="hidden">Submit</button>
                         </div>
                     </div>
