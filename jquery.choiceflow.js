@@ -24,6 +24,9 @@
             // add class to links
 			$(valueObject.links).addClass('choiceflow-active');
 
+            // after show event
+            valueObject.block.triggerHandler('choiceflow:afterShow', [valueObject.name, valueObject.group]);
+
 		},
 
 		// function to hide the block of a value
@@ -39,6 +42,9 @@
 
             // remove class from link
 			$(valueObject.links).removeClass('choiceflow-active');
+
+            // after show event
+            valueObject.block.triggerHandler('choiceflow:afterHide', [valueObject.name, valueObject.group]);
 
 		},
 

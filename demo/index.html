@@ -50,27 +50,11 @@
             $('[id^="choiceflow-block-"]')
 
                     // overwrite show event
-                    .on('choiceflow:show', function(event, value, group) {
-
+                    .on('choiceflow:show', function() {
                         // show it smooth
                         $(this).slideDown();
-
-                        // set focus
-                        switch (group + '-' + value) {
-                            case 'default-newsletter':
-                                $('#inputEmail').focus();
-                                break;
-                            case 'default-info':
-                                $('#inputName').focus();
-                                break;
-                            case 'default-finish':
-                                $('#inputTerms').focus();
-                                break;
-                        }
-
                         // don't do the normal show stuff
                         return false;
-
                     })
 
                     // overwrite hide event
@@ -97,6 +81,22 @@
                                     return false;
                         }
                         return true;
+                    })
+
+                    // after a block is shown
+                    .on('choiceflow:afterShow', function(event, value, group) {
+                        // set focus
+                        switch (group + '-' + value) {
+                            case 'default-newsletter':
+                                $('#inputEmail').focus();
+                                break;
+                            case 'default-info':
+                                $('#inputName').focus();
+                                break;
+                            case 'default-finish':
+                                $('#inputTerms').focus();
+                                break;
+                        }
                     });
 
             // overwrite submitting the form
