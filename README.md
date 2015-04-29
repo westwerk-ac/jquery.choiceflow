@@ -93,11 +93,100 @@ if ($('choiceflow-block-foo-bar').choiceflow('is-active')) {
 
 ### Customize showing and hiding of blocks
 
-Per default choiceflow uses jQuery's `show()` and `hide()`. You can overwrite those with events:
+Per default choiceflow uses jQuery's `show()` and `hide()`. You can overwrite those with the `choiceflow:show|hide' events.
+
+If you want to add checks to determine if a block should be displayed use the `choiceflow:display|canShow|canHide` events instead.
+
+## Events
+
+When clicking a link or using js to display a block the following event are fired in that order:
+
+| Event | Fired | Can be used to ... |
+| ----- | ----- | ------------------ |
+| `choiceflow:display` | before displaying | ... validate and prevent the action. |
+| `choiceflow:canHide` | before displaying | ... validate and prevent the action. |
+| `choiceflow:canShow` | before displaying | ... validate and prevent the action. |
+| `choiceflow:hide` | before hiding a block | ... overwrite how the block is hidden. |
+| `choiceflow:afterHide` | after hiding a block | ... save changes and change styles. |
+| `choiceflow:show` | before showing a block | ... overwrite how the block is shown. |
+| `choiceflow:afterShow` | after showing a block | ... change styles. |
+| `choiceflow:afterDisplay` | after displaying | ... set focus, etc. |
+
+### `choiceflow:display`
+
+This event is fired before anything else on *each* block that is going to be displayed, even if the block is already visible.
+
+This event is called with 4 arguments: `(event, blocks, group, aborted)`.
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| event | object | The default event object. |
+| blocks | array | The blocks that will be displayed. |
+| group | string | The group of the blocks. |
+| aborted | bool | Whether another event aborted this action. |
+
+If you return `false`, the action is aborted for all blocks. The events `choiceflow:display`, `choiceflow:canHide` and `choiceflow:canShow` are still fired, but their results cannot change that the action is aborted.
+
+Be careful with overlapping events. The return value of the last event counts.
+
+### `choiceflow:canHide`
+
+This event is identical with `choiceflow:display`, except that it is called on visible blocks that are going to be hidden.
+
+This event suites great for form validation.
+
+#### Example
+
+In the following scenario the block `choiceflow-block-foo-bar` can only be hidden if the user filled all inputs.
+All attempts to move to another block will fail if this returns `false`;
+
+```js
+$('#choiceflow-block-foo-bar').on('choiceflow:canHide', function() {
+	var ok = true;
+	$(this).find('input').each(function() {
+		if ($(this).val() == "")
+			ok = false;
+	});
+	return ok;
+});
+```
+
+### `choiceflow:canShow`
+
+This event is identical with `choiceflow:display`, except that it is called on hidden blocks that are going to be shown.
+
+#### Example
+
+In the following scenario the block `choiceflow-block-foo-bar` can only be shown if the user entered something in the input field with the id `inputName`.
+
+```js
+$('#choiceflow-block-foo-bar').on('choiceflow:canShow', function() {
+	return $('#inputName').val() != "";
+});
+```
+
+### `choiceflow:show` and `choiceflow:hide`
+
+These events are fired on *each* block that is definitely going to be shown or hidden.
+
+This event is called with 3 arguments: `(event, block, group)`.
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| event | object | The default event object. |
+| block | string | The block that will be shown/hidden. |
+| group | string | The group of the block. |
+
+You can use these events to overwrite the default show/hide action if you return `false`.
+
+You should not try to prevent displaying here. Use the `choiceflow:display|canShow|canHide` events for that.
+
+#### Example
+
+This will make the blocks smoothly slide up and down.
 
 ```js
 $('[id^="choiceflow-block-"]')
-	
 	// overwrite show event
 	.on('choiceflow:show', function() {
 		// show it smooth
@@ -105,7 +194,6 @@ $('[id^="choiceflow-block-"]')
 		// don't do the normal show stuff
 		return false;
 	})
-	
 	// overwrite hide event
 	.on('choiceflow:hide', function() {
 		// hide it smooth
@@ -115,108 +203,47 @@ $('[id^="choiceflow-block-"]')
 	});
 ```
 
-If you want to add checks to determine if a block should be displayed use the `choiceflow:display` event instead.
+### `choiceflow:afterShow` and `choiceflow:afterHide`
 
-## Events
+These events are fired on *each* block immediately after it was shown or hidden. If multiple blocks are shown/hidden the `choiceflow:afterShow|afterHide` event is called before the next block's `choiceflow:show|hide` event.
 
-Three examples that are identical:
+This event is called with 3 arguments: `(event, block, group)`.
 
-Example 1:
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| event | object | The default event object. |
+| block | string | The block that was shown/hidden. |
+| group | string | The group of the block. |
 
-```js
-$('[id^="choiceflow-block-"]').on('choiceflow:display', function(event, block, group) {
-	if (group == "foo" && block == "bar") {
-		// do some check
-	}
-	return true;
-});
-```
+You can use these events to apply css, set the focus, scoll to the block, etc.
 
-Example 2:
+#### Example
 
-```js
-$('[id^="choiceflow-block-foo"]').on('choiceflow:display', function(event, block) {
-	if (block == "bar") {
-		// do some check
-	}
-	return true;
-});
-```
-
-Example 3:
+This will focus on the first input element of the shown block.
 
 ```js
-$('#choiceflow-block-foo-bar').on('choiceflow:display', function() {
-	// do some check
-	return true;
+$('[id^="choiceflow-block-"]').on('choiceflow:afterShow', function() {
+	$(this).find('input').filter(':first').focus();
 });
 ```
-
-### The `choiceflow:display`, `choiceflow:canShow` and `choiceflow:canHide` event and conditions
-
-The events `choiceflow:display|canShow|canHide` take four arguments: `(event, blocks, group, aborted)`.
-The event `choiceflow:display` is fired on the block elements in `data-choiceflow-value`, even if these blocks are already shown.
-The event `choiceflow:canShow` is fired on the block elements that are going to be shown, but is not yet.
-The event `choiceflow:canHide` is fired on the block elements that are going to be hidden, but are not yet.
-The `event` is the default event object.
-The `blocks` (array) refers to the `data-choiceflow-value` blocks and the `group` to the `data-choiceflow-group`.
-The `aborted` (bool) tells you whether some other event has already aborted the displaying.
-You can omit all four arguments.
-
-In the following scenario the block `choiceflow-block-foo-bar` can only be displayed if the user entered something in the input field with the id `inputName`.
-
-```js
-$('#choiceflow-block-foo-bar').on('choiceflow:display', function() {
-	return $('#inputName').val() != "";
-});
-```
-
-If you return `false` on the event, the link that was clicked has no effect.
-If a link would display multiple blocks and any of those blocks' `choiceflow:display` event would return `false`, the link has also no effect.
-
-But be careful with overlapping events. The return value of the last event counts.
-
-### The `choiceflow:show` and `choiceflow:hide` events
-
-The events `choiceflow:show|hide` take three arguments: `(event, block, group)`.
-The events are fired on the block element.
-The `event` is the default event object.
-The `block` refers to a single `data-choiceflow-value` block and the `group` to the `data-choiceflow-group`.
-You can omit all three arguments.
-
-These events are fired when a block is going to be shown or hidden.
-
-You can use these events to overwrite the default action like above.
-
-You should not try to prevent displaying here. Use the `choiceflow:display` event for that.
-
-### The `choiceflow:afterShow` and `choiceflow:afterHide` events
-
-The events `choiceflow:afterShow|afterHide` take three arguments: `(event, block, group)`.
-The events are fired on the block element.
-The `event` is the default event object.
-The `block` refers to a single `data-choiceflow-value` block and the `group` to the `data-choiceflow-group`.
-You can omit all three arguments.
-
-These events are fired right after a block was shown or hidden.
-
-You can use these events for example to set the focus to a field in the shown block.
 
 ### The `choiceflow:afterDisplay` event
 
-The event `choiceflow:afterDisplay` takes four arguments: `(event, blocks, hiddenBlocks, group)`.
-The event is fired on the block element.
-The `event` is the default event object.
-The `blocks` (array) refers to the blocks in the `data-choiceflow-value` attribute.
-The `hiddenBlocks` (array) refers to the blocks that were hidden.
-The `group` refers to the `data-choiceflow-group`.
-You can omit all four arguments.
+This event is fired after each show and hide action is performed.
+It is fired on *each* block that was displayed, even if it was visible before.
 
-This event is fired when a link is clicked after all block hide and show actions are performed.
+This event is called with 4 arguments: `(event, blocks, hiddenBlocks, group)`.
 
-If a link action is not performed, due to the `choiceflow:display` event, this event is not fired.
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| event | object | The default event object. |
+| blocks | array | The blocks that were displayed. |
+| hiddenBlocks | array | The blocks that were hidden. |
+| group | string | The group of the block. |
 
-If a link does has no effect, because the blocks to show and hide were already shown or hidden, the event still fires.
+If a link action is not performed, due to the `choiceflow:display|canShow|canHide` events, this event is not fired.
+
+If a link does has no effect, because the blocks to show and hide were already shown or hidden, this event still fires.
 
 ## Examples
 
@@ -226,13 +253,16 @@ Step by step through 3 blocks.
 
 ```html
 <div id="choiceflow-block-default-1">
-	<!-- make block 1 active --> <span style="display: none;" data-choiceflow-value="1" data-choiceflow-active="1"></span>
+	<!-- make block 1 active -->
+	<span style="display: none;" data-choiceflow-value="1" data-choiceflow-active="1"></span>
 	BLOCK 1
-	<!-- link to block 2 --> <span data-choiceflow-value="2">Next</span>
+	<!-- link to block 2 -->
+	<span data-choiceflow-value="2">Next</span>
 </div>
 <div id="choiceflow-block-default-2">
 	BLOCK 2
-	<!-- link to block 3 --> <span data-choiceflow-value="3">Next</span>
+	<!-- link to block 3 -->
+	<span data-choiceflow-value="3">Next</span>
 </div>
 <div id="choiceflow-block-default-3">
 	BLOCK 3
