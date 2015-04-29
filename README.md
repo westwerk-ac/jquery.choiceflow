@@ -99,12 +99,6 @@ If you want to add checks to determine if a block should be displayed use the `c
 
 ## Events
 
-The events `choiceflow:display|show|hide|afterShow|afterHide` take three arguments: `(event, block, group)`.
-The events are fired on the block element.
-The `event` is the default event object.
-The `block` refers to a single `data-choiceflow-value` block and the `group` to the `data-choiceflow-group`.
-You can omit all three arguments.
-
 Three examples that are identical:
 
 Example 1:
@@ -132,13 +126,16 @@ Example 3:
 		return true;
 	});
 
-### The `choiceflow:display` event and conditions
+### The `choiceflow:display`, `choiceflow:canShow` and `choiceflow:canHide` event and conditions
 
-The event `choiceflow:display` takes three arguments: `(event, block, group)`.
-The event is fired on the block element.
+The events `choiceflow:display|canShow|canHide` take four arguments: `(event, blocks, group, aborted)`.
+The event `choiceflow:display` is fired on the block elements in `data-choiceflow-value`, even if these blocks are already shown.
+The event `choiceflow:canShow` is fired on the block elements that are going to be shown, but is not yet.
+The event `choiceflow:canHide` is fired on the block elements that are going to be hidden, but are not yet.
 The `event` is the default event object.
-The `block` refers to a single `data-choiceflow-value` block and the `group` to the `data-choiceflow-group`.
-You can omit all three arguments.
+The `blocks` (array) refers to the `data-choiceflow-value` blocks and the `group` to the `data-choiceflow-group`.
+The `aborted` (bool) tells you whether some other event has already aborted the displaying.
+You can omit all four arguments.
 
 In the following scenario the block `choiceflow-block-foo-bar` can only be displayed if the user entered something in the input field with the id `inputName`.
 

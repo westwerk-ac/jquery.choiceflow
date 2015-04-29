@@ -51,23 +51,38 @@
 		// displays the blocks for the given group and values and hide all other blocks
 		'display': function(group, values) {
 			groupObject = this.groups[group];
+            var hide = $(groupObject.active).not(values).toArray();
+            var show = $(values).not(groupObject.active).toArray();
 
             // check if can display the values
+            var aborted = false;
             for (var v = 0; v < values.length; ++v) {
-                var value = values[v];
-                if (groupObject.values[value].block.triggerHandler('choiceflow:display', [value, group]) === false) {
-                    return;
+                if (groupObject.values[values[v]].block.triggerHandler('choiceflow:display', [values, group, aborted]) === false) {
+                    aborted = true;
                 }
+            }
+            for (v = 0; v < hide.length; ++v) {
+                var value = hide[v];
+                if (groupObject.values[value].block.triggerHandler('choiceflow:canHide', [value, group, aborted]) === false) {
+                    aborted = true;
+                }
+            }
+            for (v = 0; v < show.length; ++v) {
+                value = show[v];
+                if (groupObject.values[value].block.triggerHandler('choiceflow:canShow', [value, group, aborted]) === false) {
+                    aborted = true;
+                }
+            }
+            if (aborted) {
+                return;
             }
 
             // hide previously active
-            var hide = $(groupObject.active).not(values).toArray();
             for (var h = 0; h < hide.length; ++h) {
                 this.hide(groupObject.values[hide[h]]);
             }
 
             // display now active
-            var show = $(values).not(groupObject.active).toArray();
             for (var s = 0; s < show.length; ++s) {
                 this.show(groupObject.values[show[s]]);
             }
