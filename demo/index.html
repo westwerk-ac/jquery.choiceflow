@@ -46,6 +46,14 @@
                 return errorId == '';
             }
 
+            // log what happens to the console
+            $.choiceflow({
+                'beforeLinkAction': function(values, show, hide, group) {
+                    console.log(values, show, hide, group);
+                    // we could abort it if we return false
+                }
+            });
+
             // choiceflow block events
             $('[id^="choiceflow-block-"]')
 

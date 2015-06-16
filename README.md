@@ -245,6 +245,36 @@ If a link action is not performed, due to the `choiceflow:display|canShow|canHid
 
 If a link does has no effect, because the blocks to show and hide were already shown or hidden, this event still fires.
 
+## Options
+
+Define options like this:
+
+```js
+$.choiceflow({
+	'foo': 'bar'
+});
+```
+
+Available options:
+
+| Option | Type | Description |
+| ------ | –––– | ––––––––––– |
+| beforeLinkAction | function | Called when a link is clicked. |
+| afterLinkAction | function | Called after a link action was performed. |
+
+### The `beforeLinkAction` and `afterLinkAction` options
+
+This options take a function with the following arguments:
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| blocks | array | The blocks that the link reveals. |
+| show | array | The blocks that are going to be shown and were hidden before. |
+| hide | array | The blocks that are going to be hidden and were shown before. |
+| group | string | The group of the link. |
+
+You can return `false` from the `beforeLinkAction` function to prevent the link action.
+
 ## Examples
 
 ### Basic linear flow

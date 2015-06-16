@@ -7,6 +7,14 @@
 
 	var choiceflow = {
 
+        // options
+        'options': {
+            'beforeLinkAction': function() {
+                return true;
+            },
+            'afterLinkAction': function() {}
+        },
+
 		// groups and values
 		'groups': {},
 
@@ -56,6 +64,9 @@
 
             // check if can display the values
             var aborted = false;
+            if (false === this.options.beforeLinkAction(values, show, hide, group)) {
+                aborted = true;
+            }
             for (var v = 0; v < values.length; ++v) {
                 if (groupObject.values[values[v]].block.triggerHandler('choiceflow:display', [values, group, aborted]) === false) {
                     aborted = true;
@@ -94,6 +105,7 @@
             for (v = 0; v < values.length; ++v) {
                 groupObject.values[values[v]].block.triggerHandler('choiceflow:afterDisplay', [values, hide, group]);
             }
+            this.options.afterLinkAction(values, show, hide, group)
 
 		},
 
@@ -187,6 +199,10 @@
         // init all choiceflow links
         if (action === "init") {
             $('[data-choiceflow-value]').choiceflow('init-link');
+        }
+        // set options (action is an options object)
+        else if (action !== null && typeof action === 'object') {
+            $.extend(choiceflow.options, action);
         }
         return this;
     };
