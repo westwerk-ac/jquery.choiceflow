@@ -4,15 +4,35 @@ Choiceflow is a jQuery plugin that provides you with an easy way to display and 
 It can be used for step-by-step forms with a linear or decision based path.
 The most basic configuration relies on html attributes and does not require you to write JavaScript.
 
-## Install
+## Overview
+
+1. [Install](#install)
+2. [Usage](#usage)
+  1. [A basic flow](#usage-basic)
+  2. [Multiple flows](#usage-multiple)
+  3. [Active blocks and links](#usage-links)
+  4. [Customize showing and hiding of blocks](#usage-customize)
+3. [Events](#events)
+  1. [`choiceflow:display`](#events-display)
+  2. [`choiceflow:canHide`](#events-can-hide)
+  3. [`choiceflow:canShow`](#events-can-show)
+  4. [`choiceflow:show` and `choiceflow:hide`](#events-show-hide)
+  5. [`choiceflow:afterShow` and `choiceflow:afterHide`](#events-after-show-hide)
+  6. [`choiceflow:afterDisplay`](#events-after-display)
+4. [Options](#options)
+  1. [`beforeLinkAction` and `afterLinkAction`](#options-link-action)
+5. [Examples](#examples)
+  1. [Basic linear flow](#examples-basic)
+
+## <a name="install"></a>1. Install
 
 ```shell
 bower install westwerk-ac/jquery.choiceflow
 ```
 
-## Usage
+## <a name="usage"></a>2. Usage
 
-### A basic flow
+### <a name="usage-basic"></a>i. A basic flow
 
 To build a flow you need only two things: links and blocks.
 
@@ -42,7 +62,7 @@ All other blocks are hidden.
 
 You cannot have blocks with identical ids. But you can display several blocks using one link with `data-choiceflow-value="foo,bar"`.
 
-### Multiple flows
+### <a name="usage-multiple"></a>ii. Multiple flows
 
 You can group flows using the `data-choiceflow-group` attribute:
 
@@ -55,7 +75,7 @@ Defining no group is the same as having `data-choiceflow-group="default"`.
 
 When clicking a link, only other blocks of the same group are hidden.
 
-### Active blocks and links
+### <a name="usage-links"></a>iii. Active blocks and links
 
 An element can only be a block if there is a corresponding link. All blocks are hidden per default.
 To have a block shown per default, add `data-choiceflow-active="1"` to at least one link that references the block.
@@ -91,28 +111,28 @@ if ($('choiceflow-block-foo-bar').choiceflow('is-active')) {
 }
 ```
 
-### Customize showing and hiding of blocks
+### <a name="usage-customize"></a>iv. Customize showing and hiding of blocks
 
 Per default choiceflow uses jQuery's `show()` and `hide()`. You can overwrite those with the `choiceflow:show|hide' events.
 
 If you want to add checks to determine if a block should be displayed use the `choiceflow:display|canShow|canHide` events instead.
 
-## Events
+## <a name="events"></a>3. Events
 
 When clicking a link or using js to display a block the following event are fired in that order:
 
 | Event | Fired | Can be used to ... |
 | ----- | ----- | ------------------ |
-| `choiceflow:display` | before displaying | ... validate and prevent the action. |
-| `choiceflow:canHide` | before displaying | ... validate and prevent the action. |
-| `choiceflow:canShow` | before displaying | ... validate and prevent the action. |
-| `choiceflow:hide` | before hiding a block | ... overwrite how the block is hidden. |
-| `choiceflow:afterHide` | after hiding a block | ... save changes and change styles. |
-| `choiceflow:show` | before showing a block | ... overwrite how the block is shown. |
-| `choiceflow:afterShow` | after showing a block | ... change styles. |
-| `choiceflow:afterDisplay` | after displaying | ... set focus, etc. |
+| [`choiceflow:display`](#events-display) | before displaying | ... validate and prevent the action. |
+| [`choiceflow:canHide`](#events-can-hide) | before displaying | ... validate and prevent the action. |
+| [`choiceflow:canShow`](#events-can-show) | before displaying | ... validate and prevent the action. |
+| [`choiceflow:hide`](#events-show-hide) | before hiding a block | ... overwrite how the block is hidden. |
+| [`choiceflow:afterHide`](#events-after-show-hide) | after hiding a block | ... save changes and change styles. |
+| [`choiceflow:show`](#events-show-hide) | before showing a block | ... overwrite how the block is shown. |
+| [`choiceflow:afterShow`](#events-after-show-hide) | after showing a block | ... change styles. |
+| [`choiceflow:afterDisplay`](#events-after-display) | after displaying | ... set focus, etc. |
 
-### `choiceflow:display`
+### <a name="events-display"></a>i. `choiceflow:display`
 
 This event is fired before anything else on *each* block that is going to be displayed, even if the block is already visible.
 
@@ -129,7 +149,7 @@ If you return `false`, the action is aborted for all blocks. The events `choicef
 
 Be careful with overlapping events. The return value of the last event counts.
 
-### `choiceflow:canHide`
+### <a name="events-can-hide"></a>ii. `choiceflow:canHide`
 
 This event is identical with `choiceflow:display`, except that it is called on visible blocks that are going to be hidden.
 
@@ -151,7 +171,7 @@ $('#choiceflow-block-foo-bar').on('choiceflow:canHide', function() {
 });
 ```
 
-### `choiceflow:canShow`
+### <a name="events-can-show"></a>iii. `choiceflow:canShow`
 
 This event is identical with `choiceflow:display`, except that it is called on hidden blocks that are going to be shown.
 
@@ -165,7 +185,7 @@ $('#choiceflow-block-foo-bar').on('choiceflow:canShow', function() {
 });
 ```
 
-### `choiceflow:show` and `choiceflow:hide`
+### <a name="events-show-hide"></a>iv. `choiceflow:show` and `choiceflow:hide`
 
 These events are fired on *each* block that is definitely going to be shown or hidden.
 
@@ -203,7 +223,7 @@ $('[id^="choiceflow-block-"]')
 	});
 ```
 
-### `choiceflow:afterShow` and `choiceflow:afterHide`
+### <a name="events-after-show-hide"></a>v. `choiceflow:afterShow` and `choiceflow:afterHide`
 
 These events are fired on *each* block immediately after it was shown or hidden. If multiple blocks are shown/hidden the `choiceflow:afterShow|afterHide` event is called before the next block's `choiceflow:show|hide` event.
 
@@ -227,7 +247,7 @@ $('[id^="choiceflow-block-"]').on('choiceflow:afterShow', function() {
 });
 ```
 
-### The `choiceflow:afterDisplay` event
+### <a name="events-after-display"></a>vi. `choiceflow:afterDisplay`
 
 This event is fired after each show and hide action is performed.
 It is fired on *each* block that was displayed, even if it was visible before.
@@ -245,7 +265,7 @@ If a link action is not performed, due to the `choiceflow:display|canShow|canHid
 
 If a link does has no effect, because the blocks to show and hide were already shown or hidden, this event still fires.
 
-## Options
+## <a name="options"></a>4. Options
 
 Define options like this:
 
@@ -259,10 +279,10 @@ Available options:
 
 | Option | Type | Description |
 | ------ | ---- | ----------- |
-| beforeLinkAction | function | Called when a link is clicked. |
-| afterLinkAction | function | Called after a link action was performed. |
+| [beforeLinkAction](#options-link-action) | function | Called when a link is clicked. |
+| [afterLinkAction](#options-link-action) | function | Called after a link action was performed. |
 
-### The `beforeLinkAction` and `afterLinkAction` options
+### <a name="options-link-action"></a>i. `beforeLinkAction` and `afterLinkAction`
 
 This options take a function with the following arguments:
 
@@ -275,9 +295,9 @@ This options take a function with the following arguments:
 
 You can return `false` from the `beforeLinkAction` function to prevent the link action.
 
-## Examples
+## <a name="examples"></a>5. Examples
 
-### Basic linear flow
+### <a name="examples-basic"></a>i. Basic linear flow
 
 Step by step through 3 blocks.
 
