@@ -27,15 +27,61 @@ It can be used for step-by-step forms with a linear or decision based path.
 The most basic configuration relies on html attributes and does not require you to write JavaScript.</p>
 
 <h2>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<ol>
+<li><a href="#install">Install</a></li>
+<li>
+<a href="#usage">Usage</a>
+
+<ol>
+<li><a href="#usage-basic">A basic flow</a></li>
+<li><a href="#usage-multiple">Multiple flows</a></li>
+<li><a href="#usage-links">Active blocks and links</a></li>
+<li><a href="#usage-customize">Customize showing and hiding of blocks</a></li>
+</ol>
+</li>
+<li>
+<a href="#events">Events</a>
+
+<ol>
+<li><a href="#events-display"><code>choiceflow:display</code></a></li>
+<li><a href="#events-can-hide"><code>choiceflow:canHide</code></a></li>
+<li><a href="#events-can-show"><code>choiceflow:canShow</code></a></li>
+<li><a href="#events-show-hide"><code>choiceflow:show</code> and <code>choiceflow:hide</code></a></li>
+<li><a href="#events-after-show-hide"><code>choiceflow:afterShow</code> and <code>choiceflow:afterHide</code></a></li>
+<li><a href="#events-after-display"><code>choiceflow:afterDisplay</code></a></li>
+</ol>
+</li>
+<li>
+<a href="#options">Options</a>
+
+<ol>
+<li><a href="#options-link-action"><code>beforeLinkAction</code> and <code>afterLinkAction</code></a></li>
+</ol>
+</li>
+<li>
+<a href="#examples">Examples</a>
+
+<ol>
+<li><a href="#examples-basic">Basic linear flow</a></li>
+</ol>
+</li>
+</ol>
+
+<h2>
+<a id="1-install" class="anchor" href="#1-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="install"></a>1. Install</h2>
 
 <div class="highlight highlight-shell"><pre>bower install westwerk-ac/jquery.choiceflow</pre></div>
 
 <h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+<a id="2-usage" class="anchor" href="#2-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="usage"></a>2. Usage</h2>
 
 <h3>
-<a id="a-basic-flow" class="anchor" href="#a-basic-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>A basic flow</h3>
+<a id="i-a-basic-flow" class="anchor" href="#i-a-basic-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="usage-basic"></a>i. A basic flow</h3>
 
 <p>To build a flow you need only two things: links and blocks.</p>
 
@@ -62,7 +108,8 @@ All other blocks are hidden.</p>
 <p>You cannot have blocks with identical ids. But you can display several blocks using one link with <code>data-choiceflow-value="foo,bar"</code>.</p>
 
 <h3>
-<a id="multiple-flows" class="anchor" href="#multiple-flows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiple flows</h3>
+<a id="ii-multiple-flows" class="anchor" href="#ii-multiple-flows" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="usage-multiple"></a>ii. Multiple flows</h3>
 
 <p>You can group flows using the <code>data-choiceflow-group</code> attribute:</p>
 
@@ -74,7 +121,8 @@ All other blocks are hidden.</p>
 <p>When clicking a link, only other blocks of the same group are hidden.</p>
 
 <h3>
-<a id="active-blocks-and-links" class="anchor" href="#active-blocks-and-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Active blocks and links</h3>
+<a id="iii-active-blocks-and-links" class="anchor" href="#iii-active-blocks-and-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="usage-links"></a>iii. Active blocks and links</h3>
 
 <p>An element can only be a block if there is a corresponding link. All blocks are hidden per default.
 To have a block shown per default, add <code>data-choiceflow-active="1"</code> to at least one link that references the block.</p>
@@ -103,14 +151,16 @@ You can achieve this by having a hidden link inside the block:</p>
 }</pre></div>
 
 <h3>
-<a id="customize-showing-and-hiding-of-blocks" class="anchor" href="#customize-showing-and-hiding-of-blocks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customize showing and hiding of blocks</h3>
+<a id="iv-customize-showing-and-hiding-of-blocks" class="anchor" href="#iv-customize-showing-and-hiding-of-blocks" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="usage-customize"></a>iv. Customize showing and hiding of blocks</h3>
 
 <p>Per default choiceflow uses jQuery's <code>show()</code> and <code>hide()</code>. You can overwrite those with the `choiceflow:show|hide' events.</p>
 
 <p>If you want to add checks to determine if a block should be displayed use the <code>choiceflow:display|canShow|canHide</code> events instead.</p>
 
 <h2>
-<a id="events" class="anchor" href="#events" aria-hidden="true"><span class="octicon octicon-link"></span></a>Events</h2>
+<a id="3-events" class="anchor" href="#3-events" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events"></a>3. Events</h2>
 
 <p>When clicking a link or using js to display a block the following event are fired in that order:</p>
 
@@ -124,42 +174,42 @@ You can achieve this by having a hidden link inside the block:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>choiceflow:display</code></td>
+<td><a href="#events-display"><code>choiceflow:display</code></a></td>
 <td>before displaying</td>
 <td>... validate and prevent the action.</td>
 </tr>
 <tr>
-<td><code>choiceflow:canHide</code></td>
+<td><a href="#events-can-hide"><code>choiceflow:canHide</code></a></td>
 <td>before displaying</td>
 <td>... validate and prevent the action.</td>
 </tr>
 <tr>
-<td><code>choiceflow:canShow</code></td>
+<td><a href="#events-can-show"><code>choiceflow:canShow</code></a></td>
 <td>before displaying</td>
 <td>... validate and prevent the action.</td>
 </tr>
 <tr>
-<td><code>choiceflow:hide</code></td>
+<td><a href="#events-show-hide"><code>choiceflow:hide</code></a></td>
 <td>before hiding a block</td>
 <td>... overwrite how the block is hidden.</td>
 </tr>
 <tr>
-<td><code>choiceflow:afterHide</code></td>
+<td><a href="#events-after-show-hide"><code>choiceflow:afterHide</code></a></td>
 <td>after hiding a block</td>
 <td>... save changes and change styles.</td>
 </tr>
 <tr>
-<td><code>choiceflow:show</code></td>
+<td><a href="#events-show-hide"><code>choiceflow:show</code></a></td>
 <td>before showing a block</td>
 <td>... overwrite how the block is shown.</td>
 </tr>
 <tr>
-<td><code>choiceflow:afterShow</code></td>
+<td><a href="#events-after-show-hide"><code>choiceflow:afterShow</code></a></td>
 <td>after showing a block</td>
 <td>... change styles.</td>
 </tr>
 <tr>
-<td><code>choiceflow:afterDisplay</code></td>
+<td><a href="#events-after-display"><code>choiceflow:afterDisplay</code></a></td>
 <td>after displaying</td>
 <td>... set focus, etc.</td>
 </tr>
@@ -167,7 +217,8 @@ You can achieve this by having a hidden link inside the block:</p>
 </table>
 
 <h3>
-<a id="choiceflowdisplay" class="anchor" href="#choiceflowdisplay" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>choiceflow:display</code>
+<a id="i-choiceflowdisplay" class="anchor" href="#i-choiceflowdisplay" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-display"></a>i. <code>choiceflow:display</code>
 </h3>
 
 <p>This event is fired before anything else on <em>each</em> block that is going to be displayed, even if the block is already visible.</p>
@@ -211,7 +262,8 @@ You can achieve this by having a hidden link inside the block:</p>
 <p>Be careful with overlapping events. The return value of the last event counts.</p>
 
 <h3>
-<a id="choiceflowcanhide" class="anchor" href="#choiceflowcanhide" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>choiceflow:canHide</code>
+<a id="ii-choiceflowcanhide" class="anchor" href="#ii-choiceflowcanhide" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-can-hide"></a>ii. <code>choiceflow:canHide</code>
 </h3>
 
 <p>This event is identical with <code>choiceflow:display</code>, except that it is called on visible blocks that are going to be hidden.</p>
@@ -234,7 +286,8 @@ All attempts to move to another block will fail if this returns <code>false</cod
 });</pre></div>
 
 <h3>
-<a id="choiceflowcanshow" class="anchor" href="#choiceflowcanshow" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>choiceflow:canShow</code>
+<a id="iii-choiceflowcanshow" class="anchor" href="#iii-choiceflowcanshow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-can-show"></a>iii. <code>choiceflow:canShow</code>
 </h3>
 
 <p>This event is identical with <code>choiceflow:display</code>, except that it is called on hidden blocks that are going to be shown.</p>
@@ -249,8 +302,8 @@ All attempts to move to another block will fail if this returns <code>false</cod
 });</pre></div>
 
 <h3>
-<a id="choiceflowshow-and-choiceflowhide" class="anchor" href="#choiceflowshow-and-choiceflowhide" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>choiceflow:show</code> and <code>choiceflow:hide</code>
+<a id="iv-choiceflowshow-and-choiceflowhide" class="anchor" href="#iv-choiceflowshow-and-choiceflowhide" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-show-hide"></a>iv. <code>choiceflow:show</code> and <code>choiceflow:hide</code>
 </h3>
 
 <p>These events are fired on <em>each</em> block that is definitely going to be shown or hidden.</p>
@@ -310,8 +363,8 @@ All attempts to move to another block will fail if this returns <code>false</cod
     });</pre></div>
 
 <h3>
-<a id="choiceflowaftershow-and-choiceflowafterhide" class="anchor" href="#choiceflowaftershow-and-choiceflowafterhide" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>choiceflow:afterShow</code> and <code>choiceflow:afterHide</code>
+<a id="v-choiceflowaftershow-and-choiceflowafterhide" class="anchor" href="#v-choiceflowaftershow-and-choiceflowafterhide" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-after-show-hide"></a>v. <code>choiceflow:afterShow</code> and <code>choiceflow:afterHide</code>
 </h3>
 
 <p>These events are fired on <em>each</em> block immediately after it was shown or hidden. If multiple blocks are shown/hidden the <code>choiceflow:afterShow|afterHide</code> event is called before the next block's <code>choiceflow:show|hide</code> event.</p>
@@ -357,7 +410,9 @@ All attempts to move to another block will fail if this returns <code>false</cod
 });</pre></div>
 
 <h3>
-<a id="the-choiceflowafterdisplay-event" class="anchor" href="#the-choiceflowafterdisplay-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>choiceflow:afterDisplay</code> event</h3>
+<a id="vi-choiceflowafterdisplay" class="anchor" href="#vi-choiceflowafterdisplay" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="events-after-display"></a>vi. <code>choiceflow:afterDisplay</code>
+</h3>
 
 <p>This event is fired after each show and hide action is performed.
 It is fired on <em>each</em> block that was displayed, even if it was visible before.</p>
@@ -401,10 +456,87 @@ It is fired on <em>each</em> block that was displayed, even if it was visible be
 <p>If a link does has no effect, because the blocks to show and hide were already shown or hidden, this event still fires.</p>
 
 <h2>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h2>
+<a id="4-options" class="anchor" href="#4-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="options"></a>4. Options</h2>
+
+<p>Define options like this:</p>
+
+<div class="highlight highlight-js"><pre>$.choiceflow({
+    <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>
+});</pre></div>
+
+<p>Available options:</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#options-link-action">beforeLinkAction</a></td>
+<td>function</td>
+<td>Called when a link is clicked.</td>
+</tr>
+<tr>
+<td><a href="#options-link-action">afterLinkAction</a></td>
+<td>function</td>
+<td>Called after a link action was performed.</td>
+</tr>
+</tbody>
+</table>
 
 <h3>
-<a id="basic-linear-flow" class="anchor" href="#basic-linear-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic linear flow</h3>
+<a id="i-beforelinkaction-and-afterlinkaction" class="anchor" href="#i-beforelinkaction-and-afterlinkaction" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="options-link-action"></a>i. <code>beforeLinkAction</code> and <code>afterLinkAction</code>
+</h3>
+
+<p>This options take a function with the following arguments:</p>
+
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>blocks</td>
+<td>array</td>
+<td>The blocks that the link reveals.</td>
+</tr>
+<tr>
+<td>show</td>
+<td>array</td>
+<td>The blocks that are going to be shown and were hidden before.</td>
+</tr>
+<tr>
+<td>hide</td>
+<td>array</td>
+<td>The blocks that are going to be hidden and were shown before.</td>
+</tr>
+<tr>
+<td>group</td>
+<td>string</td>
+<td>The group of the link.</td>
+</tr>
+</tbody>
+</table>
+
+<p>You can return <code>false</code> from the <code>beforeLinkAction</code> function to prevent the link action.</p>
+
+<h2>
+<a id="5-examples" class="anchor" href="#5-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="examples"></a>5. Examples</h2>
+
+<h3>
+<a id="i-basic-linear-flow" class="anchor" href="#i-basic-linear-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="examples-basic"></a>i. Basic linear flow</h3>
 
 <p>Step by step through 3 blocks.</p>
 
