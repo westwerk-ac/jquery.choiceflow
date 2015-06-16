@@ -258,7 +258,7 @@ $.choiceflow({
 Available options:
 
 | Option | Type | Description |
-| ------ | –––– | ––––––––––– |
+| ------ | ---- | ----------- |
 | beforeLinkAction | function | Called when a link is clicked. |
 | afterLinkAction | function | Called after a link action was performed. |
 
